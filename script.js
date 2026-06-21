@@ -155,7 +155,7 @@ const BUILDING_DEFS = [
   {id:"civilian_factory",name:"Civilian Factory",    icon:"🏭",baseCost:2000,   baseIncome:18,  basePower:0,  maxLevel:50, incomeScale:1.14, desc:"Steady manufacturing income"},
   {id:"farm",           name:"Agricultural Complex", icon:"🌾",baseCost:42000,   baseIncome:10,  basePower:0,  maxLevel:50, incomeScale:1.10, desc:"Food production, population growth bonus"},
   // Tier 2 – Industry
-  {id:"oil_refinery",   name:"Oil Refinery",         icon:"🛢️",baseCost:760000, baseIncome:45,  basePower:0,  maxLevel:40, incomeScale:1.16, desc:"High-value energy exports"},
+  {id:"oil_refinery",   name:"Oil Refinery",         icon:"🛢️",baseCost:760000, baseIncome:625,  basePower:0,  maxLevel:40, incomeScale:1.16, desc:"High-value energy exports"},
   {id:"steel_mill",     name:"Steel Mill",           icon:"⚙️",baseCost:1800, baseIncome:30,  basePower:10, maxLevel:40, incomeScale:1.15, desc:"Industrial backbone, factory boost"},
   {id:"bank",           name:"Central Bank",         icon:"🏦",baseCost:4000, baseIncome:70,  basePower:0,  maxLevel:30, incomeScale:1.18, desc:"Major financial multiplier"},
   {id:"stock_exchange", name:"Stock Exchange",       icon:"📈",baseCost:8000, baseIncome:120, basePower:0,  maxLevel:25, incomeScale:1.20, desc:"Premium income, volatile but powerful"},
