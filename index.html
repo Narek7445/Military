@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Military Tycoon Simulator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Country Selection Screen -->
+<div id="country-select-screen" class="screen active">
+  <div class="select-container">
+    <div class="select-header">
+      <div class="logo-icon">⚔️</div>
+      <h1>MILITARY TYCOON</h1>
+      <p class="subtitle">GLOBAL DOMINANCE SIMULATOR</p>
+    </div>
+    <div class="select-body">
+      <h2>SELECT YOUR NATION</h2>
+      <input type="text" id="country-search" placeholder="Search countries..." autocomplete="off">
+      <div id="country-list"></div>
+    </div>
+    <div id="selected-preview" class="selected-preview hidden">
+      <div id="preview-flag"></div>
+      <div id="preview-name"></div>
+      <div id="preview-stats"></div>
+      <button id="start-game-btn" class="btn btn-primary">ESTABLISH COMMAND</button>
+    </div>
+  </div>
+</div>
+
+<!-- Main Game Screen -->
+<div id="game-screen" class="screen">
+
+  <!-- Top HUD -->
+  <div id="hud">
+    <div class="hud-left">
+      <span id="hud-flag"></span>
+      <span id="hud-country"></span>
+    </div>
+    <div class="hud-resources">
+      <div class="res"><span class="res-icon">💰</span><span id="hud-money">$0</span><span class="res-rate" id="hud-income"></span></div>
+      <div class="res"><span class="res-icon">👥</span><span id="hud-troops">0</span></div>
+      <div class="res"><span class="res-icon">⚡</span><span id="hud-power">0</span></div>
+      <div class="res"><span class="res-icon">🗺️</span><span id="hud-land">0 km²</span></div>
+      <div class="res"><span class="res-icon">🏆</span><span id="hud-rank">#1</span></div>
+    </div>
+    <div class="hud-right">
+      <button class="btn btn-sm" onclick="openModal('statsModal')">📊 Stats</button>
+      <button class="btn btn-sm btn-danger" onclick="newGame()">🔄 New Game</button>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav id="main-nav">
+    <button class="nav-btn active" data-tab="dashboard" onclick="showTab('dashboard')">🏠 Dashboard</button>
+    <button class="nav-btn" data-tab="buildings" onclick="showTab('buildings')">🏗️ Buildings</button>
+    <button class="nav-btn" data-tab="military" onclick="showTab('military')">⚔️ Military</button>
+    <button class="nav-btn" data-tab="factory" onclick="showTab('factory')">🏭 Factory</button>
+    <button class="nav-btn" data-tab="nuclear" onclick="showTab('nuclear')">☢️ Nuclear</button>
+    <button class="nav-btn" data-tab="research" onclick="showTab('research')">🔬 Research</button>
+    <button class="nav-btn" data-tab="diplomacy" onclick="showTab('diplomacy')">🤝 Diplomacy</button>
+    <button class="nav-btn" data-tab="territory" onclick="showTab('territory')">🗺️ Territory</button>
+    <button class="nav-btn" data-tab="world" onclick="showTab('world')">🌍 World</button>
+  </nav>
+
+  <!-- Tab Content -->
+  <div id="tab-content">
+
+    <!-- Dashboard -->
+    <div id="tab-dashboard" class="tab active">
+      <div class="dash-grid">
+        <div class="dash-card">
+          <h3>⚡ Military Strength</h3>
+          <div class="big-number" id="dash-strength">0</div>
+          <div class="label">Global Rank: <span id="dash-rank">#--</span></div>
+          <div class="strength-breakdown" id="strength-breakdown"></div>
+        </div>
+        <div class="dash-card">
+          <h3>💰 Economy</h3>
+          <div class="eco-stats" id="eco-stats"></div>
+        </div>
+        <div class="dash-card">
+          <h3>🏗️ Infrastructure</h3>
+          <div id="infra-summary"></div>
+        </div>
+        <div class="dash-card">
+          <h3>🌍 World Snapshot</h3>
+          <div id="world-snapshot"></div>
+        </div>
+      </div>
+      <div id="recent-events">
+        <h3>📡 Intelligence Feed</h3>
+        <div id="events-list"></div>
+      </div>
+    </div>
+
+    <!-- Buildings -->
+    <div id="tab-buildings" class="tab">
+      <div class="section-header"><h2>🏗️ Infrastructure Command</h2><span id="bld-total-income" style="color:var(--green);font-size:13px"></span></div>
+      <div id="buildings-grid" class="buildings-grid"></div>
+    </div>
+
+    <!-- Military -->
+    <div id="tab-military" class="tab">
+      <div class="section-header"><h2>⚔️ Military Command</h2></div>
+      <div class="mil-sections">
+        <div class="mil-section">
+          <h3>👥 Troop Recruitment</h3>
+          <div id="troop-cards"></div>
+        </div>
+        <div class="mil-section">
+          <h3>🔫 Arsenal</h3>
+          <div id="arsenal-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Factory -->
+    <div id="tab-factory" class="tab">
+      <div class="section-header"><h2>🏭 Weapons Factory</h2></div>
+      <div class="factory-layout">
+        <div class="factory-left">
+          <h3>🔨 Design New Weapon</h3>
+          <div class="designer-form">
+            <input type="text" id="wpn-name" placeholder="Weapon Name" maxlength="30">
+            <select id="wpn-category">
+              <option value="">Select Category</option>
+              <optgroup label="🛡️ Land"><option value="Tank">Tank</option><option value="IFV">IFV</option><option value="Artillery">Artillery</option><option value="Missile Launcher">Missile Launcher</option></optgroup>
+              <optgroup label="✈️ Air"><option value="Fighter">Fighter</option><option value="Bomber">Bomber</option><option value="Attack Helicopter">Attack Helicopter</option></optgroup>
+              <optgroup label="⚓ Navy"><option value="Destroyer">Destroyer</option><option value="Frigate">Frigate</option><option value="Aircraft Carrier">Aircraft Carrier</option><option value="Submarine">Submarine</option></optgroup>
+              <optgroup label="🤖 Drone"><option value="Recon Drone">Recon Drone</option><option value="Attack Drone">Attack Drone</option><option value="Strategic Drone">Strategic Drone</option></optgroup>
+              <optgroup label="🛡 Air Defence"><option value="SAM">SAM</option><option value="Long Range SAM">Long Range SAM</option><option value="Anti Ballistic System">Anti Ballistic System</option></optgroup>
+            </select>
+            <div class="power-slider">
+              <label>Power Level: <span id="power-display">50</span></label>
+              <input type="range" id="wpn-power" min="10" max="500" value="50" oninput="updateWeaponCost()">
+            </div>
+            <div class="cost-preview" id="cost-preview">Production Cost: calculating...</div>
+            <div class="prod-time-preview" id="prod-time-preview"></div>
+            <button class="btn btn-primary" onclick="designWeapon()">🔧 Design Weapon</button>
+          </div>
+          <h3 style="margin-top:20px">🏭 Factory Upgrades</h3>
+          <div id="factory-upgrades"></div>
+        </div>
+        <div class="factory-right">
+          <h3>📋 Production Queue</h3>
+          <div id="prod-queue"></div>
+          <h3 style="margin-top:20px">🗂️ My Weapons</h3>
+          <div id="my-weapons"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nuclear -->
+    <div id="tab-nuclear" class="tab">
+      <div class="section-header"><h2>☢️ Nuclear Command</h2></div>
+      <div id="nuclear-content"></div>
+    </div>
+
+    <!-- Research -->
+    <div id="tab-research" class="tab">
+      <div class="section-header"><h2>🔬 Research & Development</h2></div>
+      <div id="research-grid" class="research-grid"></div>
+    </div>
+
+    <!-- Diplomacy -->
+    <div id="tab-diplomacy" class="tab">
+      <div class="section-header"><h2>🤝 Diplomatic Relations</h2></div>
+      <input type="text" id="diplo-search" placeholder="Search nations..." oninput="renderDiplomacy()">
+      <div id="diplomacy-list"></div>
+    </div>
+
+    <!-- Territory -->
+    <div id="tab-territory" class="tab">
+      <div class="section-header"><h2>🗺️ Occupied Territories</h2></div>
+      <div id="territory-stats" class="dash-card" style="margin-bottom:16px"></div>
+      <div id="territory-list"></div>
+    </div>
+
+    <!-- World -->
+    <div id="tab-world" class="tab">
+      <div class="section-header">
+        <h2>🌍 World Rankings</h2>
+        <input type="text" id="world-search" placeholder="Search..." oninput="renderWorld()">
+      </div>
+      <table id="world-table">
+        <thead>
+          <tr>
+            <th onclick="sortWorld('rank')">Rank</th>
+            <th onclick="sortWorld('name')">Nation</th>
+            <th onclick="sortWorld('strength')">Strength</th>
+            <th onclick="sortWorld('troops')">Troops</th>
+            <th onclick="sortWorld('money')">Treasury</th>
+            <th onclick="sortWorld('area')">Land Area</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="world-tbody"></tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<!-- Stats Modal -->
+<div id="statsModal" class="modal-overlay" onclick="closeModal('statsModal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header"><h2>📊 Statistics</h2><button class="modal-close" onclick="closeModal('statsModal')">✕</button></div>
+    <div id="stats-content" class="modal-body"></div>
+  </div>
+</div>
+
+<!-- War Modal -->
+<div id="warModal" class="modal-overlay" onclick="closeModal('warModal')">
+  <div class="modal war-modal" onclick="event.stopPropagation()">
+    <div class="modal-header"><h2 id="war-title">⚔️ WAR</h2><button class="modal-close" onclick="closeModal('warModal')">✕</button></div>
+    <div id="war-content" class="modal-body"></div>
+  </div>
+</div>
+
+<!-- Nuclear Strike Modal -->
+<div id="nuclearModal" class="modal-overlay" onclick="closeModal('nuclearModal')">
+  <div class="modal war-modal" onclick="event.stopPropagation()">
+    <div class="modal-header"><h2>☢️ NUCLEAR STRIKE</h2><button class="modal-close" onclick="closeModal('nuclearModal')">✕</button></div>
+    <div id="nuclear-modal-body" class="modal-body"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
